@@ -1,0 +1,31 @@
+stages:
+  - build
+  - test
+  - notify
+
+# Step 1: Install dependencies
+build-job:
+  stage: build
+  image: node:18
+  script:
+    - echo "Installing dependencies..."
+    - npm install
+
+# Step 2: Run basic tests (we'll just check files exist)
+test-job:
+  stage: test
+  image: node:18
+  script:
+    - echo "Checking project files..."
+    - test -f index.html
+    - test -f style.css
+    - test -f app.js
+    - test -f server.js
+    - echo "All files exist!"
+
+# Step 3: Fake notification on pipeline success
+notify-job:
+  stage: notify
+  image: alpine:latest
+  script:
+    - echo "🚀 GitLab CI pipeline ran successfully for $CI_PROJECT_NAME at $CI_COMMIT_SHORT_SHA"
