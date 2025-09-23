@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Food & Symptom Log</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Food & Symptom Log</h1>
+
+  <!-- Food Logging -->
+  <section>
+    <h2>Log Food</h2>
+    <form id="foodForm">
+      <input type="text" id="foodName" placeholder="Food name" required>
+      <input type="text" id="portion" placeholder="Portion size" required>
+      <input type="datetime-local" id="foodDate" required>
+      <button type="submit">Add Food</button>
+    </form>
+    <table id="foodTable">
+      <tr><th>Food</th><th>Portion</th><th>Date</th></tr>
+    </table>
+  </section>
+
+  <!-- Symptom Logging -->
+  <section>
+    <h2>Log Symptom</h2>
+    <form id="symptomForm">
+      <input type="text" id="symptomType" placeholder="Symptom (e.g., bloating)" required>
+      <input type="number" id="severity" placeholder="Severity (1-10)" min="1" max="10" required>
+      <textarea id="notes" placeholder="Notes"></textarea>
+      <input type="datetime-local" id="symptomDate" required>
+      <button type="submit">Add Symptom</button>
+    </form>
+    <table id="symptomTable">
+      <tr><th>Symptom</th><th>Severity</th><th>Notes</th><th>Date</th></tr>
+    </table>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>
