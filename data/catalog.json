@@ -1,0 +1,12 @@
+[
+  { "id": 1, "name": "Plain Rice", "ingredients": ["rice"] },
+  { "id": 2, "name": "Grilled Chicken", "ingredients": ["chicken", "salt", "pepper"] },
+  { "id": 3, "name": "Peanut Butter Sandwich", "ingredients": ["bread", "peanut", "butter"] },
+  { "id": 4, "name": "Garden Salad", "ingredients": ["lettuce", "tomato", "cucumber"] },
+  { "id": 5, "name": "Wheat Bread", "ingredients": ["wheat", "gluten"] },
+  { "id": 6, "name": "Yogurt", "ingredients": ["milk", "dairy"] },
+  { "id": 7, "name": "Almonds", "ingredients": ["almond"] },
+  { "id": 8, "name": "Scrambled Eggs", "ingredients": ["egg", "butter", "salt"] },
+  { "id": 9, "name": "Steamed Vegetables", "ingredients": ["carrot", "broccoli", "salt"] },
+  { "id": 10, "name": "Grilled Salmon", "ingredients": ["salmon", "lemon", "salt"] }
+]

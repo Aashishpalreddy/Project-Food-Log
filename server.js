@@ -83,9 +83,9 @@ if (EMAIL_USER && EMAIL_PASS) {
 
 // API: create and fetch food logs
 app.post("/api/food-logs", (req, res) => {
-  const { name, portion, date } = req.body;
+  const { name, portion, date, ingredients } = req.body;
   if (!name || !portion || !date) return res.status(400).json({ error: "Missing fields" });
-  const entry = { id: Date.now(), name, portion, date };
+  const entry = { id: Date.now(), name, portion, date, ingredients: Array.isArray(ingredients) ? ingredients : [] };
   foodLogs.push(entry);
 
   if (transporter) {
@@ -103,6 +103,62 @@ app.post("/api/food-logs", (req, res) => {
 
   saveFood();
   res.status(201).json(entry);
+});
+
+// Chatbot endpoint (simple rule-based)
+// POST /api/chat { q: "what can I eat that doesn't have peanuts?" }
+app.post('/api/chat', (req, res) => {
+  const q = (req.body && req.body.q) ? String(req.body.q).toLowerCase() : '';
+  if (!q) return res.status(400).json({ error: 'Missing query `q` in body' });
+
+  // detect avoid / allergic patterns
+  const avoidMatch = q.match(/avoid(?:ing)?\s+(?:foods\s+)?(?:that\s+)?(?:contain|have|with)?\s*([^?.!]+)/) || q.match(/don't\s+have\s+([^?.!]+)/) || q.match(/allergic\s+to\s+([^?.!]+)/);
+  let avoidIngredient = null;
+  if (avoidMatch) {
+    avoidIngredient = avoidMatch[1].trim().replace(/[?\.!,]$/,'').split(/\s+or\s+|,| and /)[0];
+  }
+
+  const results = { query: q, avoid: avoidIngredient, matches: [] };
+
+  // load catalog
+  let catalog = [];
+  try {
+    catalog = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'catalog.json'), 'utf8') || '[]');
+  } catch (e) {
+    catalog = [];
+  }
+
+  function ingredientContains(list, term) {
+    if (!term) return false;
+    term = term.toLowerCase();
+    return list.some(i => String(i).toLowerCase().includes(term));
+  }
+
+  if (avoidIngredient) {
+    // search catalog
+    catalog.forEach(item => {
+      if (!ingredientContains(item.ingredients || [], avoidIngredient)) {
+        results.matches.push({ source: 'catalog', name: item.name, ingredients: item.ingredients });
+      }
+    });
+    // search saved food logs
+    foodLogs.forEach(item => {
+      if (!ingredientContains(item.ingredients || [], avoidIngredient)) {
+        results.matches.push({ source: 'log', name: item.name, ingredients: item.ingredients });
+      }
+    });
+  }
+
+  // simple textual answer
+  let answer = '';
+  if (avoidIngredient) {
+    if (results.matches.length === 0) answer = `No obvious matches found for avoiding '${avoidIngredient}'.`;
+    else answer = `Foods that do NOT contain '${avoidIngredient}': showing up to 10 results.`;
+  } else {
+    answer = `I didn't detect an 'avoid X' pattern. Try: "What can I eat that doesn't have peanuts?"`;
+  }
+
+  res.json({ answer, results: results.matches.slice(0,10) });
 });
 
 app.get("/api/food-logs", (req, res) => {

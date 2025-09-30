@@ -28,6 +28,18 @@ Server will serve the frontend at `http://localhost:3000`.
 - `GET /api/symptom-logs` - list symptom entries
 - `POST /api/symptom-logs` - create symptom (json: `type, severity, notes, date`)
 
+Chatbot endpoint (rule-based)
+
+- `POST /api/chat` - query the simple rule-based chatbot
+	- Body: `{ "q": "What can I eat that doesn't have peanuts?" }`
+	- Response: `{ answer: "...", results: [ { source: 'catalog'|'log', name, ingredients } ] }`
+
+Example (PowerShell):
+
+```powershell
+Invoke-RestMethod -Uri 'http://localhost:3000/api/chat' -Method POST -Body (ConvertTo-Json @{ q = "What can I eat that doesn't have peanuts?" }) -ContentType 'application/json'
+```
+
 Data is stored in-memory for this demo.
 
 ```
